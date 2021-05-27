@@ -1,4 +1,5 @@
-from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
 import re
 import tensorflow as tf
 from tensorflow import keras
