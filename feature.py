@@ -1,5 +1,5 @@
 import nltk
-nltk.download('stopwords')
+#nltk.download('stopwords')
 import re
 import tensorflow as tf
 from tensorflow import keras
