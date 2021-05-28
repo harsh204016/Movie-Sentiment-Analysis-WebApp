@@ -5,7 +5,6 @@ import re
 import warnings
 warnings.filterwarnings("ignore")
 import tensorflow as tf
-from tensorflow import keras
 from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras import Sequential , Input 
