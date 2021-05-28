@@ -1,3 +1,4 @@
 *.pkl
 /virtual
 /sampleSubmission.csv
+/vscode

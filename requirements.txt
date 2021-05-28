@@ -3,5 +3,4 @@ pandas
 sklearn
 tensorflow>=2.4
 keras==2.4
-nltk
 flask

@@ -1,14 +1,14 @@
-import nltk
-#nltk.download('stopwords')
 import re
+import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
+stop_words = pd.read_csv("data/stopwords.csv")
 
 def text_cleaning(text):
-    forbidden_words = set(stopwords.words('english'))
+    forbidden_words = stop_words['text'].to_list()
     if text:
         text = ' '.join(text.split('.'))
         text = re.sub('\/',' ',text)

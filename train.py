@@ -1,9 +1,6 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import nltk
-#nltk.download('stopwords')
-from nltk.corpus import stopwords
 import re
 import warnings
 warnings.filterwarnings("ignore")
@@ -20,24 +17,12 @@ max_features = 20000  # Only consider the top 20k words
 maxlen = 200
 vocab_size = 50000
 
-train = pd.read_csv("train.tsv.zip",sep='\t')
-test = pd.read_csv("test.tsv.zip",sep='\t')
-
-print(train.shape)
-
+train = pd.read_csv("data/train.tsv.zip",sep='\t')
 train.drop(['SentenceId','PhraseId'],axis=1,inplace=True)
-test.drop(['SentenceId','PhraseId'],axis=1,inplace=True)
-
-print("train ",train.shape)
-
-train_copy = train[:1000].copy()
-print("train copy",train_copy.shape)
-print(train_copy.head())
-
-
+stop_words = pd.read_csv("data/stopwords.csv")
 
 def text_cleaning(text):
-    forbidden_words = set(stopwords.words('english'))
+    forbidden_words = stop_words['text'].to_list()
     if text:
         text = ' '.join(text.split('.'))
         text = re.sub('\/',' ',text)
@@ -49,27 +34,19 @@ def text_cleaning(text):
         return text
     return []
 
+def text_encoding(train_copy):
+    train_copy['Phrase'] = train_copy['Phrase'].apply(lambda x: ' '.join(text_cleaning(x)))
+    phrases = train_copy['Phrase'].tolist()
+    encoded_phrases = [one_hot(d, vocab_size) for d in phrases]
+    train_copy['Phrase'] = encoded_phrases
+    return train_copy
 
-
-train_copy['Phrase'] = train_copy['Phrase'].apply(lambda x: ' '.join(text_cleaning(x)))
-phrases = train_copy['Phrase'].tolist()
-
-
-encoded_phrases = [one_hot(d, vocab_size) for d in phrases]
-train_copy['Phrase'] = encoded_phrases
-
-print("******",train_copy.shape)
-print(train_copy.head())
-
+train_copy = train[:1000].copy()
+train_copy = text_encoding(train_copy)
 
 xtrain , xtest ,ytrain , ytest = train_test_split(train_copy.Phrase,train_copy.Sentiment,
 stratify=train_copy.Sentiment,
 test_size=0.3,random_state=42)
-
-print(xtrain.shape,xtest.shape)
-print(ytrain.shape,ytest.shape)
-
-
 
 train_data = xtrain.reset_index(drop=True)
 test_data = xtest.reset_index(drop=True)
@@ -98,7 +75,7 @@ model.summary()
 
 callback =  keras.callbacks.EarlyStopping(patience=3)
 model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
-model.fit(x_train, ytrain, batch_size=32, epochs=5, validation_data=(x_test,ytest ),callbacks=[callback])
+#model.fit(x_train, ytrain, batch_size=32, epochs=5, validation_data=(x_test,ytest ),callbacks=[callback])
 
-model.save("model.h5")
+#model.save("model.h5")
 
