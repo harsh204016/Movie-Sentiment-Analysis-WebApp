@@ -1,14 +1,11 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import re
-import warnings
-warnings.filterwarnings("ignore")
-import tensorflow as tf
 from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras import Sequential , Input 
 from tensorflow.keras.layers import  Embedding , Bidirectional , LSTM , Dense
+from tensorflow.keras.callbacks import EarlyStopping
 
 
 
@@ -23,6 +20,7 @@ stop_words = pd.read_csv("data/stopwords.csv")
 def text_cleaning(text):
     forbidden_words = stop_words['text'].to_list()
     if text:
+
         text = ' '.join(text.split('.'))
         text = re.sub('\/',' ',text)
         text = re.sub(r'\\',' ',text)
@@ -74,7 +72,7 @@ model.summary()
 
 callback =  keras.callbacks.EarlyStopping(patience=3)
 model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
-#model.fit(x_train, ytrain, batch_size=32, epochs=5, validation_data=(x_test,ytest ),callbacks=[callback])
+model.fit(x_train, ytrain, batch_size=32, epochs=5, validation_data=(x_test,ytest ),callbacks=[callback])
 
-#model.save("model.h5")
+model.save("model.h5")
 
